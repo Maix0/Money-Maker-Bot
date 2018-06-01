@@ -4,6 +4,10 @@ const commands = require("./commands.json");
 const botconfig = require("./botconfig.json");
 const commandsDesc = require("./commandsDesc.json");
 const bot = new Discord.Client({DisableEveryone: true});
+const role = require("./roles.json");
+const ms = require("ms");
+
+
 
 bot.on("ready", async () => {
   console.log(`${bot.user.username} is online !`);
@@ -14,11 +18,20 @@ bot.on("message", async message => {
   if(message.author.bot) return;
   if(message.channel.type === "dm") return;
 
+  let adminrole = message.guild.roles.find("name", `${role.admin}`);
   let Aprefix = botconfig.Aprefix;
   let prefix = botconfig.prefix;
   let messageArray = message.content.split(" ");
   let cmd = messageArray[0];
   let args = messageArray.slice(1);
+
+  if(adminrole === null){
+    message.guild.createRole({
+      name: `${role.admin}`,
+      color: `${role.adminColor}`,
+      permission: "ADMINISTRATOR"
+    });
+  }
 
   if(cmd === `${prefix}${commands.hello}`){
     return message.channel.send("Hello");
@@ -51,22 +64,6 @@ bot.on("message", async message => {
 
     return message.channel.send(help);
   }//!help -- show the help message
-  if(cmd === `${Aprefix}${commands.help}`){
-
-    if(!message.member.hasPermission("MANAGE_MESSAGES")) return message.channel.send("You don't have the Permission to do this");
-    let boticon = bot.user.displayAvatarURL;
-    let Ahelp = new Discord.RichEmbed()
-    .setDescription("AdmiHelp")
-    .setColor("#70ff70")
-    .setThumbnail(boticon)
-    .addField(`${Aprefix}${commands.Ahelp}`, `${commandsDesc.Ahelp}`)
-    .addField(`${Aprefix}${commands.ban}`, `${commandsDesc.ban}`)
-    .addField(`${Aprefix}${commands.kick}`, `${commandsDesc.kick}`)
-    .addField(`${Aprefix}${commands.disable}`, `${commandsDesc.disable}`)
-    .addField(`${Aprefix}${commands.disable}`, `${commandsDesc.disable}`);
-
-    return message.channel.send(Ahelp);
-  }
   if(cmd === `${prefix}${commands.serverinfo}`){
 
     let sicon = message.guild.iconURL;
@@ -105,13 +102,30 @@ bot.on("message", async message => {
 
     return;
   }
-  if(cmd === `${Aprefix}${commands.kick}`){
+//@somethings commands : moderation commands
+  if(cmd === `${Aprefix}${commands.help}`){
 
     if(!message.member.hasPermission("MANAGE_MESSAGES")) return message.channel.send("You don't have the Permission to do this");
+    let boticon = bot.user.displayAvatarURL;
+    let Ahelp = new Discord.RichEmbed()
+    .setDescription("AdmiHelp")
+    .setColor("#70ff70")
+    .setThumbnail(boticon)
+    .addField(`${Aprefix}${commands.Ahelp}`, `${commandsDesc.Ahelp}`)
+    .addField(`${Aprefix}${commands.ban}`, `${commandsDesc.ban}`)
+    .addField(`${Aprefix}${commands.kick}`, `${commandsDesc.kick}`)
+    .addField(`${Aprefix}${commands.disable}`, `${commandsDesc.disable}`)
+    .addField(`${Aprefix}${commands.disable}`, `${commandsDesc.disable}`);
+
+    return message.channel.send(Ahelp);
+  }
+  if(cmd === `${Aprefix}${commands.kick}`){
+
+    if(!message.member.hasPermission("KICK_MEMBERS")) return message.channel.send("You don't have the Permission to do this");
     let kUser = message.guild.member(message.mentions.users.first() || message.guild.members.get(args[0]));
     if(!kUser) return message.channel.send("Can't find User!");
     let kReason = args.join(" ").slice(22);
-    if(kUser.hasPermission("MANAGE_MESSAGES")) return message.channel.send("You can't kick this person");
+    if(kUser.hasPermission("KICK_MEMBERS")) return message.channel.send("You can't kick this person");
 
 
     let kickEmbed = new Discord.RichEmbed()
@@ -133,11 +147,11 @@ bot.on("message", async message => {
   }
   if(cmd === `${Aprefix}${commands.ban}`){
 
-    if(!message.member.hasPermission("MANAGE_MESSAGES")) return message.channel.send("You don't have the Permission to do this");
+    if(!message.member.hasPermission("BAN_MEMBERS")) return message.channel.send("You don't have the Permission to do this");
     let bUser = message.guild.member(message.mentions.users.first() || message.guild.members.get(args[0]));
     if(!bUser) return message.channel.send("Can't find User!");
     let bReason = args.join(" ").slice(22);
-    if(bUser.hasPermission("MANAGE_MESSAGES")) return message.channel.send("You can't kick this person");
+    if(bUser.hasPermission("BAN_MEMBERS")) return message.channel.send("You can't kick this person");
 
 
     let banEmbed = new Discord.RichEmbed()
@@ -156,6 +170,84 @@ bot.on("message", async message => {
     banChannel.send(banEmbed)
     return
   }
-});
+  if(cmd === `${Aprefix}${commands.grantKick}`){
+    let kickrole = message.guild.roles.find("name", `${role.kick}`);
+    if(kickrole === null){
+      message.guild.createRole({
+        name: `${role.kick}`,
+        color: `${role.kickColor}`,
+      });
+    }
+    if (!message.member.roles.has(adminrole.id)) {
+      return message.channel.send("You don't have the Permission to do this");
+    }
+    let kaUser = message.guild.member(message.mentions.users.first() || message.guild.members.get(args[0]));
+    if(!kaUser) return message.channel.send("Can't find User!");
+    if(kaUser.roles.has(kickrole.id)) return message.channel.send("This user is allready allowed to kick pepole!");
 
+    kaUser.addRole(kickrole);
+    return
+  }
+  if(cmd === `${Aprefix}${commands.grantBan}`){
+    let banrole = message.guild.roles.find("name", `${role.ban}`);
+    if(banrole === null){
+      message.guild.createRole({
+        name: `${role.ban}`,
+        color: `${role.banColor}`,
+      });
+    }
+    if ((!message.member.roles.has(adminrole.id)) && (!message.member.roles.has(banrole.id))) {
+      return message.channel.send("You don't have the Permission to do this");
+    }
+    let baUser = message.guild.member(message.mentions.users.first() || message.guild.members.get(args[0]));
+    if(!baUser) return message.channel.send("Can't find User!");
+    if(baUser.roles.has(banrole.id)) return message.channel.send("This user is allready allowed to ban pepole!");
+    baUser.addRole(banrole);
+    return
+  }
+  if(cmd === `${Aprefix}${commands.grantAdmin}`){
+    if ((!message.member.hasPermission("ADMINISTRATOR")) && (!message.member.roles.has(adminrole.id)))  {
+      return message.channel.send("You don't have the Permission to do this");
+    }
+    let aUser = message.guild.member(message.mentions.users.first() || message.guild.members.get(args[0]));
+    if(!aUser) return message.channel.send("Can't find User!");
+    if(aUser.roles.has(adminrole.id)) return message.channel.send("This user is allready allowed an admin!");
+    aUser.addRole(adminrole);
+    return
+  }
+  if(cmd === `${Aprefix}${commands.revokeKick}`){
+    let kickrole = message.guild.roles.find("name", `${role.kick}`);
+    if (!message.member.roles.has(adminrole.id)) {
+      return message.channel.send("You don't have the Permission to do this");
+    }
+    let kaUser = message.guild.member(message.mentions.users.first() || message.guild.members.get(args[0]));
+    if(!kaUser) return message.channel.send("Can't find User!");
+    if(!kaUser.roles.has(kickrole.id)) return message.channel.send("This user is allready not allowed to kick pepole ,!");
+
+    kaUser.removeRole(kickrole);
+    return
+  }
+  if(cmd === `${Aprefix}${commands.revokeBan}`){
+    let banrole = message.guild.roles.find("name", `${role.ban}`);
+    if ((!message.member.roles.has(adminrole.id)) && (!message.member.roles.has(banrole.id))) {
+      return message.channel.send("You don't have the Permission to do this");
+    }
+    let baUser = message.guild.member(message.mentions.users.first() || message.guild.members.get(args[0]));
+    if(!baUser) return message.channel.send("Can't find User!");
+    if(!baUser.roles.has(banrole.id)) return message.channel.send("This user is allready not allowed to ban pepole!");
+    baUser.removeRole(banrole);
+    return
+  }
+  if(cmd === `${Aprefix}${commands.revokeAdmin}`){
+    if ((!message.member.hasPermission("ADMINISTRATOR")) && (!message.member.roles.has(adminrole.id)))  {
+      return message.channel.send("You don't have the Permission to do this");
+    }
+    let aUser = message.guild.member(message.mentions.users.first() || message.guild.members.get(args[0]));
+    if(!aUser) return message.channel.send("Can't find User!");
+    if(!aUser.roles.has(adminrole.id)) return message.channel.send("This user isn't allready an admin!");
+    aUser.removeRole(adminrole);
+    return
+  }
+
+});
 bot.login(botconfig.token);
