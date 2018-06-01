@@ -1,0 +1,11 @@
+{
+"help": "Show this message",
+"Ahelp": "Show the Admin Commands",
+"serverinfo": "Show the Bot Info",
+"botinfo": "Show the Server Info",
+"hello": "Say Hello to the bot",
+"report": "Report a User -- work : !command {user} {reason}",
+"ban": "Ban a User -- !command {user} {reason}",
+"kick": "Kick a User -- !command {user} {reason}",
+"disabled": "disable"
+}
