@@ -7,5 +7,12 @@
 "report": "report",
 "ban": "ban",
 "kick": "kick",
+"grantKick": "grantkick",
+"grantBan": "grantban",
+"grantAdmin": "grantadmin",
+"revokeKick": "revokekick",
+"revokeBan": "revokeban",
+"revokeAdmin": "revokeadmin",
+"setup": "setup",
 "disabled": "disable"
 }

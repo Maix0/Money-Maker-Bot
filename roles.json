@@ -1,0 +1,11 @@
+{
+  "kick": "Kicker",
+  "kickColor": "#FF9900",
+  "ban": "Banner",
+  "banColor": "#660000",
+  "admin": "Admin",
+  "adminColor": "#330000",
+  "disable": "disale",
+  "disable2": "disable"
+
+}
