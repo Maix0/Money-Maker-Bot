@@ -46,6 +46,8 @@
 
 -@kick => kick an user (need the 'kick' rank)
 
--grant[kick|ban|admin] => grant the admin | ban | kick rank
+-@grant[kick|ban|admin] => grant the admin | ban | kick rank
 
--revoke[kick|ban|admin] => revoke the admin | ban | kick rank
+-@revoke[kick|ban|admin] => revoke the admin | ban | kick rank
+
+-@help => show the moderator commands
