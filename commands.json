@@ -13,6 +13,10 @@
 "revokeKick": "revokekick",
 "revokeBan": "revokeban",
 "revokeAdmin": "revokeadmin",
+"tempmute": "tmute",
 "setup": "setup",
+"reset": "reset",
+"grant": "grant",
+"revoke": "revoke",
 "disabled": "disable"
 }
