@@ -7,8 +7,6 @@ const bot = new Discord.Client({DisableEveryone: true});
 const role = require("./roles.json");
 const ms = require("ms");
 
-
-
 bot.on("ready", async () => {
   console.log(`${bot.user.username} is online !`);
   bot.user.setActivity("Maix's code", {type: "LISTENING"});
@@ -32,9 +30,9 @@ bot.on("message", async message => {
   let kickrole = message.guild.roles.find("name", `${role.kick}`);
   let muterole = message.guild.roles.find("name", `${role.mute}`);
   let mutedrole = message.guild.roles.find("name", `${role.muted}`);
+  let defaultrole = message.guild.roles.find("name", `${role.default}`)
   let CheckerRole  = message.member.roles;
 
-//!somethings commands : user friendly commands
   if(cmd === `${prefix}${commands.hello}`){
     return message.channel.send("Hello");
   } //!hello -- say hello
@@ -104,7 +102,7 @@ bot.on("message", async message => {
 
     return;
   }
-//@somethings commands : moderation commands
+
   if(cmd === `${Mprefix}${commands.help}`){
 
     if(!CheckerRole.has(staffrole.id)) return message.channel.send("You don't have the Permission to do this");
@@ -123,11 +121,11 @@ bot.on("message", async message => {
   }
   if(cmd === `${Mprefix}${commands.kick}`){
 
-    if(!CheckerRole.has(staffrole.id)) return message.channel.send("You don't have the Permission to do this");
+    if(!CheckerRole.has(kickrole.id)) return message.channel.send("You don't have the Permission to do this");
     let kUser = message.guild.member(message.mentions.users.first() || message.guild.members.get(args[0]));
     if(!kUser) return message.channel.send("Can't find User!");
     let kReason = args.join(" ").slice(22);
-    if(CheckerRole.has(staffrole.id)) return message.channel.send("You can't kick this person");
+    if(kUser.roles.has(staffrole.id)) return message.channel.send("You can't kick this person");
 
 
     let kickEmbed = new Discord.RichEmbed()
@@ -149,11 +147,11 @@ bot.on("message", async message => {
   }
   if(cmd === `${Mprefix}${commands.ban}`){
 
-    if(!CheckerRole.has(staffrole.id)) return message.channel.send("You don't have the Permission to do this");
+    if(!CheckerRole.has(banrole.id)) return message.channel.send("You don't have the Permission to do this");
     let bUser = message.guild.member(message.mentions.users.first() || message.guild.members.get(args[0]));
     if(!bUser) return message.channel.send("Can't find User!");
     let bReason = args.join(" ").slice(22);
-    if(CheckerRole.has(staffrole.id)) return message.channel.send("You can't kick this person");
+    if(bUser.roles.has(staffrole.id)) return message.channel.send("You can't kick this person");
 
 
     let banEmbed = new Discord.RichEmbed()
@@ -172,7 +170,57 @@ bot.on("message", async message => {
     banChannel.send(banEmbed)
     return
   }
-  //_somethings commands : admin commands
+  if(cmd === `${Mprefix}${commands.mute}`){
+    if(!CheckerRole.has(muterole.id)) return message.channel.send("You don't have the Permission to do this");
+    let ToMute = message.guild.member(message.mentions.users.first() || message.guild.members.get(args[0]));
+    if(!ToMute) return message.reply("No User")
+    if(ToMute.roles.has(staffrole.id)) return message.channel.send("You can't mute this person");
+    if(!mutedrole){
+      try{
+        mutedrole = await message.guild.createRole({
+          name: `${role.muted}`,
+          color: `${role.mutedColor}`,
+          permissions:[]
+        })
+        message.guild.channels.forEach(async (channel, id) => {
+          await channel.overwritePermissions(mutedrole, {
+            SEND_MESSAGES: false,
+            ADD_REACTIONS: false
+          });
+        });
+      }catch(e){
+        console.log(e.stack);
+      }
+    }
+    let mutedtime = args[1];
+    if(!mutedtime) return message.reply("You didn't specify a time!");
+
+    await(ToMute.addRole(mutedrole.id));
+    message.reply(`<@${ToMute.id}> has been muted for ${ms(ms(mutedtime))}`);
+    let muteReason = args.join(" ").slice(22);
+
+    let MuteEmbed = new Discord.RichEmbed()
+    .setDescription("~Mute~")
+    .setColor("#5a0000")
+    .addField(`Muted User`, `${ToMute} with ID ${ToMute.id}`)
+    .addField(`Muted By`, `<@${message.author.id}> with ID ${message.author.id}`)
+    .addField(`At`, message.createdAt)
+    .addField(`For`, mutedtime)
+    .addField(`Reason`, muteReason);
+
+    setTimeout(function(){
+      ToMute.removeRole(mutedrole.id);
+      message.channel.send(`<@${ToMute.id}> has been unmuted!`);
+    }, ms(mutedtime));
+
+    let muteChannel = message.guild.channels.find(`name`, `${ChannelN.mute}`);
+    if(!muteChannel) return message.channel.send(`Can't find a channel with name of : ${ChannelN.mute}`);
+
+    muteChannel.send(MuteEmbed)
+
+    return
+      }
+
   if(cmd === `${Aprefix}${commands.help}`){
 
     if(!CheckerRole.has(staffrole.id)) return message.channel.send("You don't have the Permission to do this");
@@ -192,59 +240,42 @@ bot.on("message", async message => {
     if ((!message.member.hasPermission("ADMINISTRATOR")) && (!message.member.roles.has(adminrole.id)))  {
       return message.channel.send("You don't have the Permission to do this");
     }
-    if(adminrole === null){
-      message.guild.createRole({
-        name: `${role.admin}`,
-        color: `${role.adminColor}`,
-        permissions: [8]
-      });
-    }
-    if(staffrole === null){
-      message.guild.createRole({
-        name: `${role.staff}`,
-        color: `${role.staffColor}`,
-        permissions: []
-      });
-    }
-    if(banrole === null){
-      message.guild.createRole({
-        name: `${role.ban}`,
-        color: `${role.banColor}`,
-        permissions: []
-      });
-    }
-    if(kickrole === null){
-      message.guild.createRole({
-        name: `${role.kick}`,
-        color: `${role.kickColor}`,
-        permissions: []
-      });
-    }
-    if(muterole === null){
-      message.guild.createRole({
-        name: `${role.mute}`,
-        color: `${role.muteColor}`,
-        permissions: []
-      });
-    }
-    if(mutedrole === null){
-      message.guild.createRole({
-        name: `${role.muted}`,
-        color: `${role.mutedColor}`,
-        permissions: []
-      });
-    }
+    message.guild.createRole({
+      name: `${role.admin}`,
+      color: `${role.adminColor}`,
+      permissions: [8]
+    });
+    message.guild.createRole({
+      name: `${role.staff}`,
+      color: `${role.staffColor}`,
+      permissions: []
+    });
+    message.guild.createRole({
+      name: `${role.ban}`,
+      color: `${role.banColor}`,
+      permissions: []
+    });
+    message.guild.createRole({
+      name: `${role.kick}`,
+      color: `${role.kickColor}`,
+      permissions: []
+    });
+    message.guild.createRole({
+      name: `${role.mute}`,
+      color: `${role.muteColor}`,
+      permissions: []
+    });
   }
   if(cmd === `${Aprefix}${commands.reset}`){
     if ((!message.member.hasPermission("ADMINISTRATOR")) && (!message.member.roles.has(adminrole.id)))  {
       return message.channel.send("You don't have the Permission to do this");
     }
-    if(adminrole !== null) return adminrole.delete('');
-    if(staffrole !== null) return staffrole.delete('');
-    if(banrole !== null) return banrole.delete('');
-    if(kickrole !== null) return kickrole.delete('');
-    if(muterole !== null) return muterole.delete('');
-    if(mutedrole !== null) return mutedrole.delete('');
+    adminrole.delete('');
+    staffrole.delete('');
+    banrole.delete('');
+    kickrole.delete('');
+    muterole.delete('');
+    mutedrole.delete('');
   }
   if(cmd === `${Aprefix}${commands.grant}`){
     if ((!message.member.hasPermission("ADMINISTRATOR")) && (!message.member.roles.has(adminrole.id)))  {
@@ -265,7 +296,7 @@ bot.on("message", async message => {
       return
     }
     if (grantType === 'kick'){
-      grantUser.addRole(kick)
+      grantUser.addRole(kickrole)
       return
     }
     if (grantType === 'mute'){
@@ -292,7 +323,7 @@ bot.on("message", async message => {
       return
     }
     if (revokeType === 'kick'){
-      revokeUser.removeRole(kick)
+      revokeUser.removeRole(kickrole)
       return
     }
     if (revokeType === 'mute'){

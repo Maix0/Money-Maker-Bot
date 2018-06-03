@@ -11,6 +11,8 @@
   "mutedColor": "#111111",
   "staff": "Staff",
   "staffColor": "#dddddd",
+  "default": "Default",
+  "defaulColor": "#000000",
   "disable": "disale",
   "disableColor": "#11ff55",
   "filler": "filler"
