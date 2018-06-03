@@ -25,7 +25,7 @@
 -botconfig.json => Bot token , prefix and Admin prefix
 
 
-## There is two types of commands : 
+## There is three types of commands : 
 -the regular ones : start with '!' (default)
 
 -the moderation ones : start with '@' (default)
@@ -34,6 +34,9 @@
 
 
 ## List of commands: 
+
+### Regular :
+
 -!help => show the help menu
 
 -!hello => say hello to the bot
@@ -44,6 +47,8 @@
 
 -!report => report a user
 
+### Moderation :
+
 -@ban => ban an user (need the 'ban' rank)
 
 -@kick => kick an user (need the 'kick' rank)
@@ -51,6 +56,8 @@
 -@mute => mute a user for x time (need the 'mute' rank)
 
 -@help => show the moderator commands
+
+### Admin :
 
 -_help => show the Admin help
 
