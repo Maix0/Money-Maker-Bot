@@ -30,6 +30,8 @@
 
 -the moderation ones : start with '@' (default)
 
+-the admin ones : start with '_' (default)
+
 
 ## List of commands: 
 -!help => show the help menu
@@ -46,8 +48,26 @@
 
 -@kick => kick an user (need the 'kick' rank)
 
--@grant[kick|ban|admin] => grant the admin | ban | kick rank
-
--@revoke[kick|ban|admin] => revoke the admin | ban | kick rank
+-@mute => mute a user for x time (need the 'mute' rank)
 
 -@help => show the moderator commands
+
+-_help => show the Admin help
+
+-_grant => Grant a permission to a User (_grant @user {admin|staff|ban|kick|mute})
+
+-_revoke => Grant a permission to a User (_revoke @user {admin|staff|ban|kick|mute})
+
+-_setup => Setup all the ranks
+
+-_reset => Remove all the bot ranks
+
+## Extra :
+
+The staff rank is needed to any one who is in the staff or it will be a able to be kick / mute / ban him
+
+The _setup commands is needed , but only once !
+
+The _reset commands will remove all ranks so the server owner will need to reassigne them with _grant
+
+I'm not English so expect some error in my spelling !
