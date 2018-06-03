@@ -1,5 +1,6 @@
 {
 "help": "Show this message",
+"Mhelp": "Show the Moderation Commands",
 "Ahelp": "Show the Admin Commands",
 "serverinfo": "Show the Bot Info",
 "botinfo": "Show the Server Info",
@@ -7,5 +8,9 @@
 "report": "Report a User -- work : !command {user} {reason}",
 "ban": "Ban a User -- !command {user} {reason}",
 "kick": "Kick a User -- !command {user} {reason}",
+"grant": "Grant a 'Permission' to an User -- !command {user} {admin|staff|ban|kick|mute} -- the staff is needed to everyone who is in the staff !",
+"revoke": "Revoke a 'Permission' to an User -- !command {user} {admin|staff|ban|kick|mute}",
+"setup": "Needed to be run a lot of time ! Setup the role that are needed",
+"reset": "Reset all roles if there is a probleme",
 "disabled": "disable"
 }

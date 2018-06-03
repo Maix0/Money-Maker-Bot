@@ -1,18 +1,16 @@
 {
 "help": "help",
-"Ahelp": "help",
 "serverinfo": "serverinfo",
 "botinfo": "botinfo",
 "hello": "hello",
 "report": "report",
 "ban": "ban",
 "kick": "kick",
-"grantKick": "grantkick",
-"grantBan": "grantban",
-"grantAdmin": "grantadmin",
-"revokeKick": "revokekick",
-"revokeBan": "revokeban",
-"revokeAdmin": "revokeadmin",
+"mute": "mute",
 "setup": "setup",
+"reset": "reset",
+"grant": "grant",
+"revoke": "revoke",
+"start": "start",
 "disabled": "disable"
 }

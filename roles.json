@@ -5,7 +5,15 @@
   "banColor": "#660000",
   "admin": "Admin",
   "adminColor": "#330000",
+  "mute": "Mute",
+  "muteColor": "#330000",
+  "muted": "Muted",
+  "mutedColor": "#111111",
+  "staff": "Staff",
+  "staffColor": "#dddddd",
+  "default": "Default",
+  "defaulColor": "#000000",
   "disable": "disale",
-  "disable2": "disable"
-
+  "disableColor": "#11ff55",
+  "filler": "filler"
 }

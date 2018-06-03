@@ -2,5 +2,6 @@
 "kick": "kick_logs",
 "report": "reports",
 "ban": "ban_logs",
+"mute": "mute_logs",
 "disable": "disable"
 }
